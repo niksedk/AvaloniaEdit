@@ -9,7 +9,7 @@
 
     <!-- Fork version: distinct from upstream 12.0.0 so the Nikse.AvaloniaEdit package versions
          cleanly. Overridable from the publish workflow via -p:Version=. -->
-    <Version>12.0.1</Version>
+    <Version>12.0.1-beta.1</Version>
     <Authors>Avalonia Team, niksedk</Authors>
     <Copyright>Copyright 2017-$([System.DateTime]::Now.ToString(`yyyy`)) &#169; The AvaloniaUI Project</Copyright>
     <RepositoryUrl>https://github.com/niksedk/AvaloniaEdit/</RepositoryUrl>
