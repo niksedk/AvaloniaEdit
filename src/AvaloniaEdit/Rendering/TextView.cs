@@ -63,6 +63,9 @@ namespace AvaloniaEdit.Rendering
             OptionsProperty.Changed.Subscribe(OnOptionsChanged);
 
             DocumentProperty.Changed.Subscribe(OnDocumentChanged);
+
+            // Re-layout when FlowDirection flips so RTL vs LTR line formatting is re-evaluated.
+            FlowDirectionProperty.Changed.Subscribe(e => (e.Sender as TextView)?.Redraw());
         }
 
         private readonly ColumnRulerRenderer _columnRulerRenderer;
@@ -1037,7 +1040,8 @@ namespace AvaloniaEdit.Rendering
             {
                 defaultTextRunProperties = defaultTextRunProperties,
                 textWrapping = _canHorizontallyScroll ? TextWrapping.NoWrap : TextWrapping.Wrap,
-                tabSize = Options.IndentationSize * WideSpaceWidth
+                tabSize = Options.IndentationSize * WideSpaceWidth,
+                flowDirection = FlowDirection
             };
         }
 
