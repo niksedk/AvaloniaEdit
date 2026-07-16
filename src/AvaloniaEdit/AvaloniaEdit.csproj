@@ -3,8 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <WarningsNotAsErrors>0612,0618</WarningsNotAsErrors>
-    <PackageId>Avalonia.AvaloniaEdit</PackageId>
-    <PackageDescription>This project is a port of AvalonEdit, a WPF-based text editor for Avalonia.</PackageDescription>
+    <!-- Renamed from Avalonia.AvaloniaEdit: this is niksedk's fork carrying the RTL rendering
+         fix (#401). Assembly name/namespaces stay AvaloniaEdit, so consumers only change the
+         package id. Publishes to nuget.org and GitHub Packages via .github/workflows. -->
+    <PackageId>Nikse.AvaloniaEdit</PackageId>
+    <PackageDescription>Fork of AvaloniaEdit (port of AvalonEdit) with an RTL rendering fix.</PackageDescription>
     <PackageTags>editor;code-editor;avalonia;text-editor;netstandard</PackageTags>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>

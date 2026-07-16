@@ -1,0 +1,57 @@
+name: Publish packages
+
+# Packs Nikse.AvaloniaEdit + Nikse.AvaloniaEdit.TextMate and publishes them to nuget.org and
+# GitHub Packages. Run by pushing a tag like `v12.0.1`, or manually from the Actions tab with an
+# explicit version. nuget.org is the source SE's build-ui.yml restores from (no auth needed by
+# consumers); GitHub Packages is a mirror.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Package version (e.g. 12.0.1)'
+        required: true
+        default: '12.0.1'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            V="${GITHUB_REF_NAME#v}"
+          else
+            V="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "Publishing version $V"
+
+      - name: Pack
+        run: |
+          dotnet pack src/AvaloniaEdit/AvaloniaEdit.csproj -c Release -p:Version=${{ steps.ver.outputs.version }} -o ./artifacts
+          dotnet pack src/AvaloniaEdit.TextMate/AvaloniaEdit.TextMate.csproj -c Release -p:Version=${{ steps.ver.outputs.version }} -o ./artifacts
+
+      - name: Push to nuget.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Push to GitHub Packages
+        run: |
+          dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
